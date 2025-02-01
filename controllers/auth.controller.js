@@ -244,19 +244,19 @@ export async function sendVerifyLogin(req) {
       message: "این شماره قبلا ثبت نشده است لطفا ثبت نام کنید",
     };
   } else {
-   
+   if((await existingUser.comparePassword('.' , existingUser.password))){
     const verify = await Verify.findOne({ phone: phone });
     if (!verify || (Math.floor(Date.now() / 1000) - verify.time > 120)) {
-      // const api = new MelipayamakApi('19999935106', 'Amir@1385');
-      // const sms = api.sms();
-      // const to = phone;
-      // const from = '50002710035106';
-      // const text = 'شرکت کارمونیا \n کد تایید :' + random_code ;
-      // sms.send(to, from, text).then(res => {
-      //   //RecId or Error Number 
-      // }).catch(err => {
-      //   //
-      // })
+      const api = new MelipayamakApi('19999935106', 'Amir@1385');
+      const sms = api.sms();
+      const to = phone;
+      const from = '50002710035106';
+      const text = 'شرکت کارمونیا \n کد تایید :' + random_code ;
+      sms.send(to, from, text).then(res => {
+        //RecId or Error Number 
+      }).catch(err => {
+        //
+      })
       if(verify){
         await Verify.findByIdAndDelete(verify.id)
       }
@@ -275,7 +275,12 @@ export async function sendVerifyLogin(req) {
         message: "کد تایید قبلا برای شما راسال شده و برای درخواست مجدد کد باید" + ' ' + (Math.floor(120 - (Math.floor(Date.now() / 1000) - verify.time))) + ' ' + "ثانیه دیگه امتحان کنید" ,
       };
     }
-  }
+  }else{
+    return {
+      success: false,
+      message: 'از طریق لاگین ادمین اقدام کنید' ,
+    };
+  }}
 }
 
 export async function sendVerify(req) {
