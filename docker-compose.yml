@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    restart: always
+    volumes:
+      - .:/app
+      - ./uploads:/app/public/uploads 
+    command: pnpm dev
+
+volumes:
+  uploads:  # تعریف volume برای پوشه uploads
+    driver: local
